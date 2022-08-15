@@ -1,10 +1,12 @@
-on:
-  release:
-    types: [created]
-    
-jobs:
+name: "tagged-release"
 
-  build:
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  tagged-release:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
@@ -20,12 +22,10 @@ jobs:
     - name: Build
       run: go build
 
-    - name: Action Release
-      # You may pin to the exact commit or the version.
-      # uses: yakuhzi/release-asset@f96c41c3fdc53a02ab20a60014725490f91702a3
-      uses: yakuhzi/release-asset@v1.2.3
+    - name: "Tagged Release"
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        # File to upload to the release
-        file: clj-runner.exe
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+          *.exe

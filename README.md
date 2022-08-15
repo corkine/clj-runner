@@ -2,7 +2,7 @@
 
 A simple way to 'click to run' clojure script with deps.edn local deps cache.
 
-> Just Windows work now, need JVM install and Clojure CLI Configured.
+> Just work on Windows now, need JVM install and Clojure CLI Configured.
 
 Generally speaking, in order to accomplish a certain task, you need to create a Clojure project in IDEA or VSCode - maybe Lein or deps.edn manage the dependencies. When development is done, you need to package uberjar and create a script: `.bat` for Windows or `.sh` script for Linux to execute `java -jar clojure.main YOUR-SCRIPT` or `clojure -M -m YOUR-SCRIPT`, which is pretty tedious -- if you want to configure something, you will have to use one more edn file, which you then read in the Clojure script - now you have four things: `YOUR-SCRIPT.clj`, `YOUR-CONFIG.edn`, `YOUR-DEPS-ALL.jar` and `YOUR-RUNNABLE.bat`, which is unnecessary for most tasks.
 

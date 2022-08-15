@@ -11,14 +11,14 @@ import (
 
 func main() {
 	if len(os.Args) < 2 || !strings.HasSuffix(os.Args[1], ".clj") {
-		_ = fmt.Errorf("need input clj file")
+		fmt.Printf("need input clj file\n")
 		return
 	}
 	file, err := os.OpenFile(os.Args[1], os.O_RDONLY, 0)
 	if err != nil {
 		fmt.Println(err)
 		if os.IsNotExist(err) {
-			_ = fmt.Errorf("input file %s not exist", os.Args[1])
+			fmt.Printf("input file %s not exist\n", os.Args[1])
 		}
 		return
 	}
@@ -42,7 +42,7 @@ func main() {
 	}
 	_ = file.Close()
 	if currentLine == "" {
-		_ = fmt.Errorf("no command need to run")
+		fmt.Printf("no command need to run\n")
 		return
 	}
 	command := currentLine
@@ -54,7 +54,7 @@ func main() {
 		_ = fmt.Errorf("run command error: %v", err)
 		return
 	}
-	fmt.Printf("result: %s", out)
+	fmt.Printf("result: %s\n", out)
 	fmt.Printf("Press Enter to leave\n")
 	_, _ = fmt.Scanln()
 }

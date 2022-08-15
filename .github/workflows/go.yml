@@ -31,3 +31,5 @@ jobs:
       with:
         # File to upload to the release
         file: clj-runner.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

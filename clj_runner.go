@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
+	"runtime"
 	"strings"
 )
 
@@ -23,7 +25,6 @@ func main() {
 		return
 	}
 	dir := path.Dir(strings.ReplaceAll(os.Args[1], "\\", "/"))
-	//fmt.Printf("dir is %s", dir)
 
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
@@ -46,15 +47,32 @@ func main() {
 		return
 	}
 	command := currentLine
-	cmd := exec.Command("powershell", "-NoProfile", command)
-	cmd.Dir = dir
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("powershell", "-NoProfile", command)
+	} else if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
+		cmd = exec.Command("bash", "-c", command)
+	}
 	fmt.Printf("at dir %s\n", dir)
-	out, err := cmd.CombinedOutput()
+	stdout, err := cmd.StdoutPipe()
+	//out, err := cmd.CombinedOutput() ;get output instantly
+	//fmt.Printf("result: %s\n", out)
+	cmd.Stderr = os.Stderr
+	cmd.Dir = dir
+	err = cmd.Start()
 	if err != nil {
 		_ = fmt.Errorf("run command error: %v", err)
 		return
 	}
-	fmt.Printf("result: %s\n", out)
+	reader := bufio.NewReader(stdout)
+	for {
+		line, err2 := reader.ReadString('\n')
+		if err2 != nil || io.EOF == err2 {
+			break
+		}
+		fmt.Print(line)
+	}
+	err = cmd.Wait()
 	fmt.Printf("Press Enter to leave\n")
 	_, _ = fmt.Scanln()
 }

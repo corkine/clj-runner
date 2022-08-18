@@ -12,10 +12,10 @@ clj-runner.exe uses Go development, what it does is very simple, **read the comm
 
 clj-runner.exe work well with babashka, if `#!/usr/bin/env bb` is detected at the beginning of the file, then the `bb xxx.clj` file will be executed directly to take advantage of SCI and GraalVM's SVM for the fastest possible script execution, On the other hand, if the file detected at the beginning is `; clojure -Sdeps .. -M -m xxx.clj` or `; bb clojure -Sdeps .. -M -m xxx.clj`, it will be handed over to Shell for execution.
 
-```shell
+```
 #!/usr/bin/env bb
-; clojure -Sdeps '{:paths ["".""] :deps {clj-file-zip/clj-file-zip {:mvn/version,""0.1.0""}}}' -M -m auto-backup
-; bb clojure -Sdeps '{:paths ["".""] :deps {clj-file-zip/clj-file-zip {:mvn/version,""0.1.0""}}}' -M -m auto-backup
+; clojure -Sdeps '{:paths ["."] :deps {clj-file-zip/clj-file-zip {:mvn/version,"0.1.0"}}}' -M -m auto-backup
+; bb clojure -Sdeps '{:paths ["."] :deps {clj-file-zip/clj-file-zip {:mvn/version,"0.1.0"}}}' -M -m auto-backup
 ```
 
 Note. if use `#!/usr/bin/env bb`, then will run `bb xxx.clj`, so you may need run -main like script with that:

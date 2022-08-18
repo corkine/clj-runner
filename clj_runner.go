@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func main() {
+func run() {
 	if len(os.Args) < 2 || !strings.HasSuffix(os.Args[1], ".clj") {
 		fmt.Printf("need input clj file\n")
 		return
@@ -24,20 +24,23 @@ func main() {
 		}
 		return
 	}
-	dir := path.Dir(strings.ReplaceAll(os.Args[1], "\\", "/"))
+	all := strings.ReplaceAll(os.Args[1], "\\", "/")
+	dir := path.Dir(all)
+	filename := path.Base(all)
 
 	fileScanner := bufio.NewScanner(file)
 	fileScanner.Split(bufio.ScanLines)
 	currentLine := ""
 	for fileScanner.Scan() {
 		currentLine = strings.TrimSpace(fileScanner.Text())
+		if strings.HasPrefix(currentLine, "#!/usr/bin/env bb") {
+			currentLine = fmt.Sprintf("bb %s", filename)
+			break
+		}
 		if strings.HasPrefix(currentLine, ";") &&
 			strings.Contains(currentLine, "clojure") {
 			currentLine = strings.Replace(currentLine, ";", "", 1)
 			currentLine = strings.ReplaceAll(currentLine, "\\", "/")
-			//currentLine = strings.Replace(currentLine, ":deps",
-			//	fmt.Sprintf(":paths [\".\"] :deps"), 1)
-			fmt.Printf("run command: %s ", currentLine)
 			break
 		}
 	}
@@ -49,14 +52,14 @@ func main() {
 	command := currentLine
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
+		command = strings.ReplaceAll(command, "\"", "\"\"")
+		fmt.Printf("run command: %s at dir %s\n", command, dir)
 		cmd = exec.Command("powershell", "-NoProfile", command)
 	} else if runtime.GOOS == "darwin" || runtime.GOOS == "linux" {
+		fmt.Printf("run command: %s at dir %s\n", command, dir)
 		cmd = exec.Command("bash", "-c", command)
 	}
-	fmt.Printf("at dir %s\n", dir)
 	stdout, err := cmd.StdoutPipe()
-	//out, err := cmd.CombinedOutput() ;get output instantly
-	//fmt.Printf("result: %s\n", out)
 	cmd.Stderr = os.Stderr
 	cmd.Dir = dir
 	err = cmd.Start()
@@ -73,6 +76,10 @@ func main() {
 		fmt.Print(line)
 	}
 	err = cmd.Wait()
+}
+
+func main() {
+	run()
 	fmt.Printf("Press Enter to leave\n")
 	_, _ = fmt.Scanln()
 }

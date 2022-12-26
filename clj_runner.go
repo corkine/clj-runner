@@ -32,11 +32,16 @@ func run() {
 	fileScanner.Split(bufio.ScanLines)
 	currentLine := ""
 	for fileScanner.Scan() {
+		// support for #!/usr/bin/env bb
+		// support for #!/use/bin/env bb clojure -Sdeps .. -M xxx
 		currentLine = strings.TrimSpace(fileScanner.Text())
-		if strings.HasPrefix(currentLine, "#!/usr/bin/env bb") {
-			currentLine = fmt.Sprintf("bb %s", filename)
+		if strings.HasPrefix(currentLine, "#!/usr/bin/env") {
+			otherParams := strings.TrimPrefix(currentLine, "#!/usr/bin/env")
+			otherParams = strings.TrimSpace(otherParams)
+			currentLine = fmt.Sprintf("%s %s", otherParams, filename)
 			break
 		}
+		// support for ;clojure -Sdeps .. -M xxx
 		if strings.HasPrefix(currentLine, ";") &&
 			strings.Contains(currentLine, "clojure") {
 			currentLine = strings.Replace(currentLine, ";", "", 1)

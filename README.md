@@ -14,11 +14,28 @@ In order to make Clojure and the JVM library behind it provide a 100 times bette
 
 And all this just needs `#/usr/bin/env bb` or` #/usr/bin/env bb clojure -Sdeps` -- in UNIX like system. For Windows, to support similar "Click to run", the clj runner program will automatically recognize the first line beginning with `#!/usr/bin/env` and then splicing file name to Powershell to run the command.
 
+## Impl - Go
+
+Go version of clj-runner on clj_runner.go, managed by go.mod.
+
+```go
+go build
+```
+
+## Impl - Rust
+
+Rust version of clj-runner on src/main.rs, managed by Cargo.toml and Cargo.lock.
+
+```rust
+cargo run -- xxx.clj
+cargo build --release
+```
+
 ## Usage
 
 clj-runner support: 
 
-```
+```clj
 // Universe Script on Windows, Unix-like OS:
 #!/usr/bin/env bb
 #!/usr/bin/env bb clojure -Sdeps '{:paths ["."] :deps {clj-file-zip/clj-file-zip {:mvn/version,"0.1.0"}}}' -M -m auto-backup

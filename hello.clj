@@ -1,2 +1,3 @@
-#!/usr/bin/env bb clojure -Spath
+#!/usr/bin/env bb
 (ns hello)
+(println "Hello World!")

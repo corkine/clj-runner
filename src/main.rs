@@ -2,6 +2,16 @@ use std::{env, fs::{self}, process::Command};
 
 static ENV_HINT: &str = "#!/usr/bin/env";
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn abc_test() {
+        let file = "hello/world.clj".split("/").last().unwrap_or("");
+        dbg!(&file);
+    }
+}
+
 fn main() {
     let mut args = env::args();
     args.next();
@@ -14,7 +24,11 @@ fn main() {
 }
 
 fn handle_file(file_path: String) {
-    let contents = match fs::read_to_string(file_path) {
+    let file_name = match file_path.split("/").last() {
+        None => &file_path,
+        Some(file) => file,
+    };
+    let contents = match fs::read_to_string(&file_path) {
         Err(_) => {
             eprintln!("file can't open!");
             return;
@@ -31,18 +45,14 @@ fn handle_file(file_path: String) {
         eprintln!("not find exec command");
         return;
      }
-    let commands: Vec<&str> = first_line
-        .split(" ")
-        .collect();
-    if commands.is_empty() {
-        eprintln!("not find exec program name");
-        return;
-    }
+    let mut full_cmds_line = first_line.replace(ENV_HINT, "");
+    full_cmds_line.push_str(" ");
+    full_cmds_line.push_str(&file_path);
     if cfg!(target_os="windows") {
         Command::new("powershell")
             .arg("-NoProfile")
             //commands[1..].to_owned()
-            .arg(first_line.replace(ENV_HINT, "").as_str())
+            .arg(full_cmds_line)
             .spawn()
             .unwrap()
             .wait()
@@ -50,7 +60,7 @@ fn handle_file(file_path: String) {
     } else {
         Command::new("bash")
             .arg("-c")
-            .arg(first_line.replace(ENV_HINT, "").as_str())
+            .arg(full_cmds_line)
             .spawn()
             .unwrap()
             .wait()

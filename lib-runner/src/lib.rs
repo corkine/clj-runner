@@ -23,16 +23,38 @@ mod tests {
     }
 }
 
-fn main() {
+fn ends_with_suffix(file_path: &str, match_suffix: &[&str]) -> bool {
+    for ele in match_suffix {
+        if file_path.ends_with(ele) { return true }
+    }
+    false
+}
+
+fn format_suffix(match_suffix: &[&str]) -> String {
+    let mut str = String::new();
+    let end = match_suffix.len();
+    for (i, ele) in match_suffix.iter().enumerate() {
+        str.push_str(ele);
+        if i != end {
+            str.push_str(" or ");
+        }
+    }
+    str
+}
+
+/// 从命令行读取特定文件路径，如果合适，则对其进行首行命令调用。
+/// match_suffix: 匹配的文件名后缀，包括 . 号，比如 .clj, .cljw 等。
+pub fn run(match_suffix: &[&str]) {
     let mut args = env::args();
     args.next();
     match args.next() {
-        Some(file_path) if file_path.ends_with(".clj") => {
+        Some(file_path) if ends_with_suffix(&file_path, match_suffix) => {
             handle_file(file_path);
         },
         _ => {
+            let format_suffix = format_suffix(match_suffix);
             println!("clj-runner by rust, v{VESION}\n
-pass a .clj file to execute! program will
+pass a {format_suffix} file to execute! program will
 find the first comment line and try to run 
 it by pass the file path at the end of line.\n
 eg. #!/usr/bin/env bb
@@ -46,7 +68,7 @@ eg. ; bb");
 /// 对传入的 .clj 文件进行解析，获取其首个以 #!/usr/bin/env 开头或 ; 开头的行
 /// 并且根据平台调用 powershell 或 bash 执行拼接了文件路径到此命令后的命令
 /// 在程序执行结束后立刻返回
-fn handle_file(file_path: String) {
+pub fn handle_file(file_path: String) {
     let contents = match fs::read_to_string(&file_path) {
         Err(_) => {
             eprintln!("file can't open!");

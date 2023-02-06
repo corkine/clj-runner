@@ -5,3 +5,17 @@ version = 3
 [[package]]
 name = "clj-runner"
 version = "0.1.0"
+dependencies = [
+ "lib-runner",
+]
+
+[[package]]
+name = "cljw-runner"
+version = "0.1.0"
+dependencies = [
+ "lib-runner",
+]
+
+[[package]]
+name = "lib-runner"
+version = "0.1.0"

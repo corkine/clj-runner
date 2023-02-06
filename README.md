@@ -16,7 +16,7 @@ And all this just needs `#/usr/bin/env bb` or` #/usr/bin/env bb clojure -Sdeps` 
 
 ## Impl - Go
 
-Go version of clj-runner on clj_runner.go, managed by go.mod.
+Go version of clj-runner on `go-impl` folder.
 
 ```go
 go build
@@ -24,10 +24,11 @@ go build
 
 ## Impl - Rust
 
-Rust version of clj-runner on src/main.rs, managed by Cargo.toml and Cargo.lock.
+Rust version of clj-runner on `lib-runner` folder. The subprogram `clj-runner` ends immediately after running the program, while the subprogram `cljw-runner` displays the results after running the program, waits for input and ends (can be used in the case of double-clicking to execute the task and viewing the execution output under Windows).
 
 ```rust
-cargo run -- xxx.clj
+cargo run -p clj-runner -- hello.clj
+cargo run -p cljw-runner -- hello.clj
 cargo build --release
 ```
 

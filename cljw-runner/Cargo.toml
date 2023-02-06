@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 lib-runner = { path = "../lib-runner" }
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"

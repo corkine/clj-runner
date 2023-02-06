@@ -82,7 +82,7 @@ pub fn handle_file(file_path: String) {
         .take(1)
         .next()
         .unwrap_or("");
-    let full_cmds_line = match match first_line {
+    let mut full_cmds_line = match match first_line {
         line if first_line.starts_with(ENV_HINT) =>
         Some(line.replacen(ENV_HINT, "", 1)),
         line if first_line.starts_with(CLOJURE_COMMENT) =>
@@ -93,6 +93,9 @@ pub fn handle_file(file_path: String) {
         l.push_str(&file_path);
         l
     }) { None => return, Some(l) => l, };
+    if cfg!(target_os="windows") {
+        full_cmds_line = full_cmds_line.replace("\"", "\\\"");
+    }
     let (shell, arg) = if cfg!(target_os="windows") {
         ("powershell","-NoProfile")
     } else {
